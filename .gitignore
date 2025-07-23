@@ -136,3 +136,7 @@ cython_debug/
 
 # VS Code settings
 .vscode/
+
+# Local Data
+data/reviews_individuales/
+data/tags_individuales/
