@@ -11,7 +11,6 @@ DATA_DIR.mkdir(exist_ok=True)
 
 URL_UNIVERSITY = "https://www.misprofesores.com/escuelas/Facultad-de-Psicologia-UNAM_1805"
 TABLE_NAME_PATH = DATA_DIR / "tabla_profesores.csv"
-LINKS_NAME_PATH = DATA_DIR / "enlaces_profesores.csv"
 
 async def main():
     async with async_playwright() as p:
@@ -22,54 +21,47 @@ async def main():
         await page.wait_for_selector("tr")
         print("Página cargada:", await page.title())
 
-        # Obtener filas
+        # Obtener filas de la tabla
         raw_rows = await page.locator("tr").all_inner_texts()
         tabla = [row.split("\t") for row in raw_rows if row.strip()]
 
-        # Enlaces
+        # Obtener enlaces
         link_locators = page.locator("td.url.hidden-xs.sorting_1 a")
-        n = await link_locators.count()
-        hrefs = [await link_locators.nth(i).get_attribute("href") for i in range(n)]
+        n_links = await link_locators.count()
+        hrefs = [await link_locators.nth(i).get_attribute("href") for i in range(n_links)]
 
-        # Guardar
+        # Guardar datos emparejando tabla con enlaces
         datos = []
 
-        for row in tabla:
+        for i, row in enumerate(tabla):
             row = [cell.strip() for cell in row if cell.strip()]
-
             if len(row) < 3:
                 continue  # no tiene lo esencial
 
             nombre = row[0]
             dep = row[1] if len(row) == 4 else None
+            review_str = row[-2]
+            rating_str = row[-1]
 
-            review_str = row[-2]  # penúltimo campo
-            rating_str = row[-1]  # último campo
-
-            # Validamos número de reviews
-            match_reviews = re.match(r"(\d+)", review_str)
             try:
+                match_reviews = re.match(r"\d+", review_str)
                 num_reviews = int(match_reviews.group()) if match_reviews else None
                 rating = float(rating_str)
             except:
-                continue  # si falla conversión, lo ignoramos
+                continue
 
             if nombre and num_reviews is not None and rating is not None:
                 datos.append({
                     "profesor": nombre,
                     "dep": dep,
                     "num_reviews": num_reviews,
-                    "rating": rating
+                    "rating": rating,
+                    "enlace": hrefs[i] if i < len(hrefs) else None
                 })
 
-        # Convertir a DataFrame
         df = pd.DataFrame(datos)
         df.to_csv(TABLE_NAME_PATH, index=False)
-        print(f"Tabla guardada en {TABLE_NAME_PATH}")
-        # Guardar enlaces
-        enlaces_df = pd.DataFrame({"enlace": hrefs})
-        enlaces_df.to_csv(LINKS_NAME_PATH, index=False)
-        print(f"Enlaces guardados en {LINKS_NAME_PATH}")
+        print(f"\n✅ Tabla con enlaces guardada en {TABLE_NAME_PATH}")
 
         await browser.close()
 
