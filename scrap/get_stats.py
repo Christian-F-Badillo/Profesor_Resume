@@ -27,6 +27,23 @@ def slugify(value):
     value = re.sub(r'[^\w\s-]', '', value).strip().lower()
     return re.sub(r'[-\s]+', '_', value)
 
+# Obtener profesores ya procesados (por nombre de archivo en REVIEWS_DIR)
+procesados = {re.sub(r'_reviews\.csv$', '', f.name) for f in REVIEWS_DIR.glob("*_reviews.csv")}
+
+# Filtrar urls y profesores pendientes
+urls_filtradas = []
+profesores_filtrados = []
+
+for prof, url in zip(profesores, urls):
+    if slugify(prof) not in procesados:
+        profesores_filtrados.append(prof)
+        urls_filtradas.append(url)
+
+# Reemplazar las listas originales por las filtradas
+urls = urls_filtradas
+profesores = profesores_filtrados
+
+
 async def main():
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)
@@ -60,7 +77,7 @@ async def main():
 
                 try:
                     await page.wait_for_selector("div.date", timeout=100000)
-                    await page.wait_for_timeout(9000)
+                    await page.wait_for_timeout(2500)
                 except:
                     print("⚠️ Timeout esperando 'div.date'. Rompiendo el ciclo.")
                     break
@@ -102,7 +119,7 @@ async def main():
 
                     await last_li.locator("a").click(force=True)
                     print("➡️ Click en siguiente")
-                    await page.wait_for_timeout(30000)
+                    await page.wait_for_timeout(5000)
                 except Exception as e:
                     print("❌ No se pudo hacer clic en siguiente:", str(e))
                     break

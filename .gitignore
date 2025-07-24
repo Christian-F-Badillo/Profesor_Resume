@@ -140,3 +140,4 @@ cython_debug/
 # Local Data
 data/reviews_individuales/
 data/tags_individuales/
+remove_prof.txt
