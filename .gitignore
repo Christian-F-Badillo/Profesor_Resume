@@ -141,3 +141,4 @@ cython_debug/
 data/reviews_individuales/
 data/tags_individuales/
 remove_prof.txt
+tokens/
