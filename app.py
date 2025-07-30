@@ -13,7 +13,7 @@ data_reviews = pd.read_csv('https://raw.githubusercontent.com/Christian-F-Badill
 lista_profesores = sorted(data_reviews["profesor"].unique())
 
 app.layout = dbc.Container([
-    html.H1(children = "Análisis de Opiniones de Profesores de la Facultad de Psicología, UNAM", className="text-center my-4", style = {'fontSize': 40}),
+    html.H1(children = "Análisis de Opiniones de Profesores de la Facultad de Psicología, UNAM", className="text-center my-4", style = {'fontSize': 35}),
 
         dcc.Dropdown(
             id='selector-profesor',
@@ -23,9 +23,16 @@ app.layout = dbc.Container([
             className="mb-4"
         ),
         html.Div(id="contenido-profesor"),
-
-    ]
-    )
+        html.Hr(),
+        html.Footer([
+        html.P("¿Te sirvió esta app? Invítame un café ☕", className="text-center"),
+        html.Div(
+            html.A("Donar en Ko-fi", href="https://ko-fi.com/christianbadillo1408", target="_blank"),
+            className="text-center"
+        )
+        ], className="mt-4 text-muted")
+    ],
+    fluid=True)
 
 @app.callback(
     Output("contenido-profesor", "children"),
