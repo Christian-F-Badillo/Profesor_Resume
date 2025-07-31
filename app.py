@@ -3,9 +3,9 @@ import dash_bootstrap_components as dbc
 import plotly.express as px
 import pandas as pd
 from dash import Dash, dcc, html, Output, Input
-from utils import generar_resumen, plot_facilidad, plot_calidad, show_means, get_tags, plot_tendencias, get_link
+from utils import generar_resumen, plot_facilidad, plot_calidad, show_means, get_tags, plot_tendencias, get_link, num_estrellas
 
-app = Dash(__name__, external_stylesheets=[dbc.themes.CYBORG])
+app = Dash(__name__, external_stylesheets=[dbc.themes.CYBORG,'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css'])
 
 app.title = "Análisis de Opiniones de Profesores de la Facultad de Psicología, UNAM"
 URL = "https://raw.githubusercontent.com/Christian-F-Badillo/Profesor_Resume/refs/heads/master/data/professor_data.csv"
@@ -77,6 +77,15 @@ def update_dashboard(nombre:str) -> tuple:
                                 get_tags(data, nombre)
                             ])
                         ], width=12)
+                    ],
+                    className="mb-4"
+                ),
+                dbc.Row(
+                    [
+                        html.H6(children=f"Número de Estrellas", className="text-left mb-4"),
+                        dbc.Col(children=[
+                        num_estrellas(data, nombre)
+                    ], width=12)
                     ],
                     className="mb-4"
                 ),

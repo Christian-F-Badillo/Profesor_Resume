@@ -6,6 +6,7 @@ from dash import dcc
 import dash_daq as daq
 import plotly.io as pio
 import dash_bootstrap_components as dbc
+import numpy as np
 
 pio.templates.default = "plotly_dark"
 theme = {
@@ -409,3 +410,43 @@ def get_link(df_prof: pd.DataFrame, name: str) -> str:
 
     link = row.iloc[0]['enlace']
     return link if pd.notna(link) else "https://www.misprofesores.com/"
+
+def num_estrellas(data: pd.DataFrame, name: str) -> html.Div:
+    row = data[data['profesor'] == name]
+    if row.empty:
+        return html.Div("No hay datos de estrellas disponibles para este profesor.")
+    
+    valor = row.iloc[0]['rating']
+    
+    if isinstance(valor, str):
+        estrellas = pd.to_numeric(valor.split(','), errors='coerce')
+    elif isinstance(valor, list):
+        estrellas = pd.to_numeric(valor, errors='coerce')
+    else:
+        return html.Div("Formato de estrellas no reconocido.")
+
+    if estrellas.size > 0:
+        promedio = np.mean(estrellas)
+        entero = int(promedio)
+        fraccion = promedio - entero
+        return generar_estrellas(entero, fraccion)
+    else:
+        return html.Div("No hay datos de estrellas disponibles para este profesor.")
+
+def generar_estrellas(entero: int, fraccion: float) -> html.Div:
+    """
+    Genera un componente HTML que muestra estrellas basadas en el número entero y la fracción.
+    Args:
+        entero (int): Parte entera del número de estrellas.
+        fraccion (float): Parte fraccionaria del número de estrellas.
+    Returns:
+        html.Div: Componente HTML con las estrellas.
+    """
+    estrellas = []
+    for _ in range(entero):
+        estrellas.append(html.I(className="fas fa-star text-warning"))
+    
+    if fraccion >= 0.5:
+        estrellas.append(html.I(className="fas fa-star-half-alt text-warning"))
+    
+    return html.Div(estrellas, className="estrellas")
