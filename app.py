@@ -7,6 +7,7 @@ from utils import generar_resumen, plot_facilidad, plot_calidad, show_means, get
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.CYBORG,'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css'])
 
+server = app.server
 app.title = "Análisis de Opiniones de Profesores de la Facultad de Psicología, UNAM"
 URL = "https://raw.githubusercontent.com/Christian-F-Badillo/Profesor_Resume/refs/heads/master/data/professor_data.csv"
 data = pd.read_csv(URL)
