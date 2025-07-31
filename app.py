@@ -40,11 +40,21 @@ app.layout = dbc.Container([
         html.Div(id="contenido-profesor"),
         html.Hr(),
         html.Footer([
-        html.Div(
-            html.A("Si esta app de fue de ayuda, puedes apoyarme con un café ☕", href="https://ko-fi.com/christianbadillo1408", target="_blank"),
-            className="text-center"
-        )
-        ], className="mt-4 text-muted")
+        html.Div([
+                html.P([
+                    "Si esta app te fue de ayuda, puedes ",
+                    html.A([
+                        html.I(className="fas fa-coffee me-1"),
+                        "Invitarme un café"
+                    ], href="https://ko-fi.com/christianbadillo1408", target="_blank"),
+                    " o compartirla. Código fuente disponible en GitHub ",
+                    html.A([
+                        html.I(className="fab fa-github me-1"),
+                        "GitHub"
+                    ], href="https://github.com/Christian-F-Badillo/analisis-opiniones-profesores-con-LLM-y-Dash", target="_blank")
+                ], className="mb-0")
+            ], className="text-center text-muted py-3")
+        ], className="mt-5")
     ],
     fluid=True)
 
