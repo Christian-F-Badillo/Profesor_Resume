@@ -253,11 +253,11 @@ def get_tags(df_prof: pd.DataFrame, name: str) -> html.Div:
     """
     row = df_prof[df_prof['profesor'] == name]
     if row.empty:
-        return []
+        return html.Div("No hay etiquetas disponibles para este profesor.")
 
     tags = row.iloc[0]['tags']
     if pd.isna(tags):
-        return []
+        return html.Div("No hay etiquetas disponibles para este profesor.")
 
     tags = tags.split(',')
     tags = [tag.strip() for tag in tags if tag.strip() != '']
